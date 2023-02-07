@@ -4,6 +4,8 @@ import { Button, Container, Grid, TextField, Typography } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ReactImageUploading from "react-images-uploading";
 import Image from "next/image";
+import { useMutation } from "@apollo/client";
+import CREATE_PLAYER from "@/graphql/mutations/playerMutations";
 
 const theme = createTheme();
 
@@ -16,9 +18,18 @@ export default function Create() {
     team: "",
     matches: "",
   });
+  const [createPlayerMutation, { data, loading, error }] =
+    useMutation(CREATE_PLAYER);
+
+  if (data) {
+    console.log(data);
+  }
+
+  if (error) {
+    console.log(error);
+  }
   const onChange = (imageList, addUpdateIndex) => {
     // data for submit
-    console.log(imageList, addUpdateIndex);
     setImages(imageList);
     if (imageList.length > 0) {
       console.log(imageList[0]?.data_url);
@@ -27,7 +38,16 @@ export default function Create() {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
+    // console.log(formData);
+    createPlayerMutation({
+      variables: {
+        photoUrl: formData.photoUrl,
+        name: formData.name,
+        age: formData.age,
+        team: formData.team,
+        matches: formData.matches,
+      },
+    });
   };
   return (
     <>

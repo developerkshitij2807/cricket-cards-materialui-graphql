@@ -14,7 +14,7 @@ const PlayerSchema = gql`
   }
 
   type Mutation {
-    createPlayer(
+    createPlayerMutation(
       photoUrl: String
       name: String
       age: String
