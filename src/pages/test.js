@@ -8,6 +8,10 @@ import TEST_MUTATION from "./../graphql/mutations";
 export default function Test() {
   // const { loading, error, data } = useQuery(TEST_QUERY);
   const [testMutation, { loading, error, data }] = useMutation(TEST_MUTATION);
+
+  if (data) {
+    console.log(data);
+  }
   return (
     <>
       <Head>

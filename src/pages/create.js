@@ -1,13 +1,6 @@
 import React, { useState } from "react";
 import Head from "next/head";
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Button, Container, Grid, TextField, Typography } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ReactImageUploading from "react-images-uploading";
 import Image from "next/image";
@@ -17,7 +10,7 @@ const theme = createTheme();
 export default function Create() {
   const [images, setImages] = useState([]);
   const [formData, setFormData] = useState({
-    photo: {},
+    photoUrl: "",
     name: "",
     age: "",
     team: "",
@@ -27,11 +20,14 @@ export default function Create() {
     // data for submit
     console.log(imageList, addUpdateIndex);
     setImages(imageList);
-    setFormData({ ...formData, photo: imageList[0] });
+    if (imageList.length > 0) {
+      console.log(imageList[0]?.data_url);
+      setFormData({ ...formData, photoUrl: imageList[0]?.data_url });
+    }
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("submit clicked");
+    console.log(formData);
   };
   return (
     <>
@@ -52,21 +48,14 @@ export default function Create() {
           <Typography component="h1" variant="h3">
             Create Player
           </Typography>
-          <Grid container spacing={4}>
-            <Grid
-              item
-              xs={4}
-              sx={{
-                display: "flex",
-                marginTop: 10,
-                alignItems: "center",
-                justifyContent: "flex-start",
-                gap: 5,
-              }}
-            >
+          <Grid container sx={{ alignItems: "center" }}>
+            <Grid item xs={2}>
               <Typography component="h1" variant="h5">
                 Photo
               </Typography>
+            </Grid>
+
+            <Grid item xs={4}>
               <ReactImageUploading
                 value={images}
                 onChange={onChange}
@@ -80,7 +69,7 @@ export default function Create() {
                   isDragging,
                   dragProps,
                 }) => (
-                  <Container component="div">
+                  <>
                     {imageList.length === 0 ? (
                       <Button
                         container="outlined"
@@ -93,9 +82,8 @@ export default function Create() {
                     ) : (
                       <></>
                     )}
-
                     {imageList.map((image, index) => (
-                      <Container
+                      <Grid
                         component="div"
                         key={index}
                         sx={{
@@ -133,13 +121,14 @@ export default function Create() {
                             </Button>
                           </Grid>
                         </Grid>
-                      </Container>
+                      </Grid>
                     ))}
-                  </Container>
+                  </>
                 )}
               </ReactImageUploading>
             </Grid>
           </Grid>
+
           <Grid container sx={{ alignItems: "center" }}>
             <Grid item xs={2}>
               <Typography component="h1" variant="h5">
@@ -151,7 +140,7 @@ export default function Create() {
                 id="outlined-basic"
                 label="Name"
                 variant="outlined"
-                onChange={() =>
+                onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
               />
@@ -169,6 +158,9 @@ export default function Create() {
                 label="Age"
                 variant="outlined"
                 type="number"
+                onChange={(e) =>
+                  setFormData({ ...formData, age: e.target.value })
+                }
               />
             </Grid>
           </Grid>
@@ -179,7 +171,14 @@ export default function Create() {
               </Typography>
             </Grid>
             <Grid item xs={4}>
-              <TextField id="outlined-basic" label="Team" variant="outlined" />
+              <TextField
+                id="outlined-basic"
+                label="Team"
+                variant="outlined"
+                onChange={(e) =>
+                  setFormData({ ...formData, team: e.target.value })
+                }
+              />
             </Grid>
           </Grid>
           <Grid container sx={{ alignItems: "center" }}>
@@ -194,6 +193,9 @@ export default function Create() {
                 label="Matches"
                 variant="outlined"
                 type="number"
+                onChange={(e) =>
+                  setFormData({ ...formData, matches: e.target.value })
+                }
               />
             </Grid>
           </Grid>

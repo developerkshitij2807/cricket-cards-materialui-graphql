@@ -1,36 +1,11 @@
-import { gql, ApolloServer } from "apollo-server-micro";
+import { ApolloServer } from "apollo-server-micro";
 import { connectDB } from "../../utils/connectDB";
-
-const typeDefs = gql`
-  type Test {
-    name: String
-    id: String
-  }
-  type Query {
-    testQuery: Test
-  }
-
-  type Mutation {
-    testMutation(name: String, id: String): Test
-  }
-`;
-
-const resolvers = {
-  Query: {
-    testQuery: () => {
-      return { name: "Next JS", id: "101" };
-    },
-  },
-  Mutation: {
-    testMutation: (_parent, { name, id }, _context) => {
-      return { name, id };
-    },
-  },
-};
+import typeDefs from "../../graphql/schema";
+import resolvers from "../../graphql/resolvers";
+import { buildSubgraphSchema } from "@apollo/subgraph";
 
 const apolloServer = new ApolloServer({
-  typeDefs,
-  resolvers,
+  schema: buildSubgraphSchema({ typeDefs, resolvers }),
 });
 
 const startServer = apolloServer.start();
