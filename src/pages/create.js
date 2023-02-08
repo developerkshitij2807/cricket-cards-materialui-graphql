@@ -6,6 +6,7 @@ import ReactImageUploading from "react-images-uploading";
 import Image from "next/image";
 import { useMutation } from "@apollo/client";
 import CREATE_PLAYER from "@/graphql/mutations/playerMutations";
+import axios from "axios";
 
 const theme = createTheme();
 
@@ -21,24 +22,28 @@ export default function Create() {
   const [createPlayerMutation, { data, loading, error }] =
     useMutation(CREATE_PLAYER);
 
-  if (data) {
-    console.log(data);
-  }
+  const fileUploadUrl = async (fileDataUrl) => {
+    const urlSplit = fileDataUrl.split(",");
+    let body = new FormData();
+    body.set("key", process.env.NEXT_PUBLIC_IMGBB_KEY);
+    body.append("image", urlSplit[1]);
+    return await axios("https://api.imgbb.com/1/upload", {
+      method: "post",
+      data: body,
+    });
+  };
 
-  if (error) {
-    console.log(error);
-  }
-  const onChange = (imageList, addUpdateIndex) => {
+  const onChange = async (imageList) => {
     // data for submit
     setImages(imageList);
     if (imageList.length > 0) {
-      console.log(imageList[0]?.data_url);
-      setFormData({ ...formData, photoUrl: imageList[0]?.data_url });
+      const res = await fileUploadUrl(imageList[0].data_url);
+      setFormData({ ...formData, photoUrl: res.data.data.url });
     }
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    // console.log(formData);
+    console.log(formData);
     createPlayerMutation({
       variables: {
         photoUrl: formData.photoUrl,
@@ -160,6 +165,7 @@ export default function Create() {
                 id="outlined-basic"
                 label="Name"
                 variant="outlined"
+                required
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
@@ -178,6 +184,7 @@ export default function Create() {
                 label="Age"
                 variant="outlined"
                 type="number"
+                required
                 onChange={(e) =>
                   setFormData({ ...formData, age: e.target.value })
                 }
@@ -195,6 +202,7 @@ export default function Create() {
                 id="outlined-basic"
                 label="Team"
                 variant="outlined"
+                required
                 onChange={(e) =>
                   setFormData({ ...formData, team: e.target.value })
                 }
@@ -213,6 +221,7 @@ export default function Create() {
                 label="Matches"
                 variant="outlined"
                 type="number"
+                required
                 onChange={(e) =>
                   setFormData({ ...formData, matches: e.target.value })
                 }
