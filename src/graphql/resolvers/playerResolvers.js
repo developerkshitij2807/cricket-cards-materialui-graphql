@@ -1,16 +1,18 @@
+import Player from "@/models/playerModel";
+
 const playerResolvers = {
   Query: {
-    getPlayers: () => {
-      return [];
+    getPlayers: async () => {
+      return await Player.find();
     },
   },
   Mutation: {
-    createPlayerMutation: (
+    createPlayerMutation: async (
       _parent,
       { photoUrl, name, age, team, matches },
       _context
     ) => {
-      console.log(photoUrl, name, age, team, matches);
+      await Player.create({ photoUrl, name, age, team, matches });
       return { photoUrl, name, age, team, matches };
     },
   },

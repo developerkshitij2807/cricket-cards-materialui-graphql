@@ -17,11 +17,8 @@ const CREATE_PLAYER = gql`
     ) {
       photoUrl
       name
-      age
-      team
-      matches
     }
   }
 `;
 
-export default CREATE_PLAYER;
+export { CREATE_PLAYER };

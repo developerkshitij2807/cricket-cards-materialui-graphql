@@ -9,4 +9,4 @@ const TEST_MUTATION = gql`
   }
 `;
 
-export default TEST_MUTATION;
+export { TEST_MUTATION };

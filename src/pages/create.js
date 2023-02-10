@@ -5,15 +5,15 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ReactImageUploading from "react-images-uploading";
 import Image from "next/image";
 import { useMutation } from "@apollo/client";
-import CREATE_PLAYER from "@/graphql/mutations/playerMutations";
-import axios from "axios";
+import { remoteImageUploadApi } from "./api/imgbb";
+import { CREATE_PLAYER } from "@/graphql/mutations/playerMutations";
 
 const theme = createTheme();
 
 export default function Create() {
   const [images, setImages] = useState([]);
   const [formData, setFormData] = useState({
-    photoUrl: "",
+    photoDataUrl: "",
     name: "",
     age: "",
     team: "",
@@ -22,31 +22,28 @@ export default function Create() {
   const [createPlayerMutation, { data, loading, error }] =
     useMutation(CREATE_PLAYER);
 
-  const fileUploadUrl = async (fileDataUrl) => {
-    const urlSplit = fileDataUrl.split(",");
-    let body = new FormData();
-    body.set("key", process.env.NEXT_PUBLIC_IMGBB_KEY);
-    body.append("image", urlSplit[1]);
-    return await axios("https://api.imgbb.com/1/upload", {
-      method: "post",
-      data: body,
-    });
-  };
-
-  const onChange = async (imageList) => {
-    // data for submit
+  const onChange = (imageList) => {
     setImages(imageList);
     if (imageList.length > 0) {
-      const res = await fileUploadUrl(imageList[0].data_url);
-      setFormData({ ...formData, photoUrl: res.data.data.url });
+      setFormData({
+        ...formData,
+        photoDataUrl: imageList[0].data_url.split(",").pop(),
+      });
     }
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
+    let body = new FormData();
+    body.append("key", process.env.NEXT_PUBLIC_IMGBB_KEY);
+    body.append("image", formData.photoDataUrl);
+
+    const remoteURL = await remoteImageUploadApi(body);
+
+    console.log(remoteURL);
     createPlayerMutation({
       variables: {
-        photoUrl: formData.photoUrl,
+        photoUrl: remoteURL,
         name: formData.name,
         age: formData.age,
         team: formData.team,
