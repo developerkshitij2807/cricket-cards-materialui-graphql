@@ -1,28 +1,42 @@
-import React, { useState } from "react";
-import Head from "next/head";
-import { Button, Container, Grid, TextField, Typography } from "@mui/material";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import ReactImageUploading from "react-images-uploading";
-import Image from "next/image";
+import { UPDATE_PLAYER } from "@/graphql/mutations/playerMutations";
+import { removeUpdatedPlayerAction } from "@/redux/actions/playerActions";
 import { useMutation } from "@apollo/client";
-import { remoteImageUploadApi } from "./api/imgbb";
-import { CREATE_PLAYER } from "@/graphql/mutations/playerMutations";
+import {
+  Button,
+  Container,
+  createTheme,
+  Grid,
+  TextField,
+  ThemeProvider,
+  Typography,
+} from "@mui/material";
+import Head from "next/head";
+import Image from "next/image";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import ReactImageUploading from "react-images-uploading";
+import { useSelector } from "react-redux";
+import { remoteImageUploadApi } from "./api/imgbb";
+import lodash from "lodash";
 
-const theme = createTheme();
-
-export default function Create() {
+export default function Update() {
   const [images, setImages] = useState([]);
-  const [formData, setFormData] = useState({
-    photoDataUrl: "",
-    name: "",
-    age: "",
-    team: "",
-    matches: "",
-  });
-  const [createPlayerMutation, { data, loading, error }] =
-    useMutation(CREATE_PLAYER);
   const router = useRouter();
+  const player = useSelector((state) => state.playerReducer);
+  const [updatePlayerMutation, { data, loading, error }] =
+    useMutation(UPDATE_PLAYER);
+
+  if (error) {
+    console.log(error);
+  }
+
+  const [formData, setFormData] = useState({
+    photo: player.photo,
+    name: player.name,
+    age: player.age,
+    team: player.team,
+    matches: player.matches,
+  });
 
   const onChange = (imageList) => {
     setImages(imageList);
@@ -33,18 +47,24 @@ export default function Create() {
       });
     }
   };
+
+  const theme = createTheme();
+
+  const handleCancel = () => {
+    dispatch(removeUpdatedPlayerAction());
+    router.push("/");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
     let body = new FormData();
     body.append("key", process.env.NEXT_PUBLIC_IMGBB_KEY);
     body.append("image", formData.photoDataUrl);
 
     const remoteURL = await remoteImageUploadApi(body);
-
-    console.log(remoteURL);
-    await createPlayerMutation({
+    await updatePlayerMutation({
       variables: {
+        _id: player.playerId,
         photoUrl: remoteURL,
         name: formData.name,
         age: formData.age,
@@ -53,12 +73,21 @@ export default function Create() {
       },
     });
 
-    router.push("/");
+    // router.push("/");
   };
+
+  useEffect(() => {
+    if (_.isEmpty(player)) {
+      router.push("/");
+    } else {
+      setImages([{ data_url: player.photo }]);
+    }
+  }, []);
+
   return (
     <>
       <Head>
-        <title>Create Player</title>
+        <title>Update Player</title>
       </Head>
       <ThemeProvider theme={theme}>
         <Container
@@ -72,7 +101,7 @@ export default function Create() {
           }}
         >
           <Typography component="h1" variant="h3">
-            Create Player
+            Update Player
           </Typography>
           <Grid container sx={{ alignItems: "center" }}>
             <Grid item xs={2}>
@@ -119,7 +148,7 @@ export default function Create() {
                       >
                         <Image
                           src={image.data_url}
-                          alt="Alternate Image"
+                          alt="Player Image"
                           width={100}
                           height={100}
                         />
@@ -134,7 +163,7 @@ export default function Create() {
                         >
                           <Grid item xs>
                             <Button variant="contained" onClick={onImageUpdate}>
-                              Update
+                              Change
                             </Button>
                           </Grid>
                           <Grid item xs>
@@ -164,12 +193,12 @@ export default function Create() {
             <Grid item xs={4}>
               <TextField
                 id="outlined-basic"
-                label="Name"
                 variant="outlined"
                 required
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
+                value={formData.name}
               />
             </Grid>
           </Grid>
@@ -182,13 +211,13 @@ export default function Create() {
             <Grid item xs={4}>
               <TextField
                 id="outlined-basic"
-                label="Age"
                 variant="outlined"
                 type="number"
                 required
                 onChange={(e) =>
                   setFormData({ ...formData, age: e.target.value })
                 }
+                value={formData.age}
               />
             </Grid>
           </Grid>
@@ -201,7 +230,7 @@ export default function Create() {
             <Grid item xs={4}>
               <TextField
                 id="outlined-basic"
-                label="Team"
+                value={formData.team}
                 variant="outlined"
                 required
                 onChange={(e) =>
@@ -219,7 +248,7 @@ export default function Create() {
             <Grid item xs={4}>
               <TextField
                 id="outlined-basic"
-                label="Matches"
+                value={formData.matches}
                 variant="outlined"
                 type="number"
                 required
@@ -229,10 +258,26 @@ export default function Create() {
               />
             </Grid>
           </Grid>
-          <Grid container sx={{ justifyContent: "end", width: 435 }}>
-            <Button color="success" variant="contained" type="submit">
-              Submit
-            </Button>
+          <Grid
+            container
+            sx={{ justifyContent: "end", width: 435 }}
+            spacing={2}
+          >
+            <Grid item>
+              <Button
+                color="error"
+                variant="contained"
+                type="submit"
+                onClick={handleCancel}
+              >
+                Cancel
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button color="success" variant="contained" type="submit">
+                Update
+              </Button>
+            </Grid>
           </Grid>
         </Container>
       </ThemeProvider>

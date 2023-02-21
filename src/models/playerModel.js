@@ -8,5 +8,5 @@ const playerSchema = new Schema({
   team: "",
   matches: "",
 });
-
-export default mongoose.model("Player", playerSchema);
+module.exports =
+  mongoose.models.Player || mongoose.model("Player", playerSchema);
