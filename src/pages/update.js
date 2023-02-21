@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import ReactImageUploading from "react-images-uploading";
 import { useSelector } from "react-redux";
 import { remoteImageUploadApi } from "./api/imgbb";
-import lodash from "lodash";
+import _ from "lodash";
 
 export default function Update() {
   const [images, setImages] = useState([]);
