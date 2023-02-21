@@ -23,8 +23,7 @@ export default function Update() {
   const [images, setImages] = useState([]);
   const router = useRouter();
   const player = useSelector((state) => state.playerReducer);
-  const [updatePlayerMutation, { data, loading, error }] =
-    useMutation(UPDATE_PLAYER);
+  const [updatePlayerMutation, { error }] = useMutation(UPDATE_PLAYER);
 
   if (error) {
     console.log(error);
@@ -72,8 +71,7 @@ export default function Update() {
         matches: formData.matches,
       },
     });
-
-    // router.push("/");
+    router.push("/");
   };
 
   useEffect(() => {

@@ -22,10 +22,15 @@ const playerResolvers = {
       { _id, photoUrl, name, age, team, matches },
       _context
     ) => {
-      console.log("came here");
-      console.log(_id, photoUrl, name, age, team, matches);
+      const res = await Player.findByIdAndUpdate(_id, {
+        photoUrl,
+        name,
+        age,
+        team,
+        matches,
+      });
 
-      return { _id, photoUrl, name, age, team, matches };
+      return res;
     },
   },
 };
