@@ -51,4 +51,13 @@ const UPDATE_PLAYER = gql`
   }
 `;
 
-export { CREATE_PLAYER, UPDATE_PLAYER };
+const DELETE_PLAYER = gql`
+  mutation DeletePlayerMutation($_id: String) {
+    deletePlayerMutation(_id: $_id) {
+      message
+      isDeleted
+    }
+  }
+`;
+
+export { CREATE_PLAYER, UPDATE_PLAYER, DELETE_PLAYER };

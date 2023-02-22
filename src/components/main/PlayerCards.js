@@ -6,7 +6,7 @@ const PlayerCards = (props) => {
   const { playersData } = props;
 
   return (
-    <Grid container justifyContent="center" spacing={10} alignItems="center">
+    <Grid container justifyContent="center" spacing={3} alignItems="center">
       {playersData.map((player, index) => (
         <PlayerCard
           photo={player.photoUrl}

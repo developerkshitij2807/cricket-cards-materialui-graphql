@@ -32,6 +32,18 @@ const playerResolvers = {
 
       return res;
     },
+
+    deletePlayerMutation: async (_parent, { _id }, _context) => {
+      const response = await Player.findByIdAndDelete(_id);
+      if (response) {
+        return {
+          message: "Successfully Deleted",
+          isDeleted: true,
+        };
+      }
+
+      return { message: "Player Not Found", isDeleted: false };
+    },
   },
 };
 

@@ -10,6 +10,11 @@ const PlayerSchema = gql`
     matches: String
   }
 
+  type Result {
+    message: String
+    isDeleted: Boolean
+  }
+
   type Query {
     getPlayers: [Player]
   }
@@ -31,6 +36,8 @@ const PlayerSchema = gql`
       team: String
       matches: String
     ): Player
+
+    deletePlayerMutation(_id: String): Result
   }
 `;
 
