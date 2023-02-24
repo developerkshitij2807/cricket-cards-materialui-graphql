@@ -35,14 +35,11 @@ export default function Create() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
     let body = new FormData();
     body.append("key", process.env.NEXT_PUBLIC_IMGBB_KEY);
     body.append("image", formData.photoDataUrl);
 
     const remoteURL = await remoteImageUploadApi(body);
-
-    console.log(remoteURL);
     await createPlayerMutation({
       variables: {
         photoUrl: remoteURL,
@@ -229,7 +226,14 @@ export default function Create() {
               />
             </Grid>
           </Grid>
-          <Grid container sx={{ justifyContent: "end", width: 435 }}>
+          <Grid container sx={{ justifyContent: "end", width: 435, gap: 2 }}>
+            <Button
+              color="error"
+              variant="contained"
+              onClick={() => router.push("/")}
+            >
+              Cancel
+            </Button>
             <Button color="success" variant="contained" type="submit">
               Submit
             </Button>

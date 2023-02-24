@@ -4,9 +4,11 @@ import { GET_PLAYERS } from "@/graphql/queries/playerQueries";
 import { useQuery } from "@apollo/client";
 import { CircularProgress, Container } from "@mui/material";
 import Head from "next/head";
+import { useEffect } from "react";
 
 export default function Home() {
   const { data, loading, error } = useQuery(GET_PLAYERS);
+  useEffect(() => {}, [JSON.stringify(data)]);
   if (error) {
     console.log(error);
   } else if (loading) {
