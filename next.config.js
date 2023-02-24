@@ -1,6 +1,20 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-}
+module.exports = {
+  webpack5: true,
+  webpack: (config) => {
+    config.resolve.fallback = { fs: false };
 
-module.exports = nextConfig
+    return config;
+  },
+  images: {
+    domains: ["i.ibb.co"],
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: "http://localhost:3000/:path*",
+      },
+    ];
+  },
+};

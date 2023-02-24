@@ -1,11 +1,17 @@
+import { store, wrapper } from "@/redux/store";
 import "@/styles/globals.css";
 import { ApolloProvider } from "@apollo/client";
+import { Provider } from "react-redux";
 import client from "../lib/apollo-client";
 
-export default function App({ Component, pageProps }) {
+function App({ Component, pageProps }) {
   return (
-    <ApolloProvider client={client}>
-      <Component {...pageProps} />
-    </ApolloProvider>
+    <Provider store={store}>
+      <ApolloProvider client={client}>
+        <Component {...pageProps} />
+      </ApolloProvider>
+    </Provider>
   );
 }
+
+export default wrapper.withRedux(App);
