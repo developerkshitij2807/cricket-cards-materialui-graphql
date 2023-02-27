@@ -6,7 +6,7 @@ import {
 } from "@apollo/client";
 
 const client = new ApolloClient({
-  link: ApolloLink.from([new HttpLink({ uri: "http://localhost:3000/api/graphql" })]),
+  link: ApolloLink.from([new HttpLink({ uri: "/api/graphql" })]),
   cache: new InMemoryCache(),
 });
 
