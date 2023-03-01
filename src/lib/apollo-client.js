@@ -8,7 +8,10 @@ import {
 const client = new ApolloClient({
   link: ApolloLink.from([
     new HttpLink({
-      uri: "https://cricket-cards-materialui-graphql-developerkshitij2807.vercel.app/",
+      uri: [
+        "https://cricket-cards-materialui-graphql-developerkshitij2807.vercel.app/",
+        "https://cricket-cards-materialui-graphql.vercel.app/",
+      ],
     }),
   ]),
   cache: new InMemoryCache(),
