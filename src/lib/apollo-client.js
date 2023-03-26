@@ -2,18 +2,20 @@ import {
   ApolloClient,
   InMemoryCache,
   HttpLink,
-  ApolloLink,
 } from "@apollo/client";
 
+const linkHttp = new HttpLink({
+  uri: '/api/graphql',
+  headers: {
+      accept: 'application/json',
+      'Content-Type': 'application/json'
+  },
+  useGETForQueries: false
+})
+
+
 const client = new ApolloClient({
-  link: ApolloLink.from([
-    new HttpLink({
-      uri: "https://cricket-cards-materialui-graphql.vercel.app/",
-    }),
-    new HttpLink({
-      uri: "https://cricket-cards-materialui-graphql-developerkshitij2807.vercel.app/",
-    }),
-  ]),
+  link: linkHttp,
   cache: new InMemoryCache(),
 });
 
